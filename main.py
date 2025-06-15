@@ -97,11 +97,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         record_order(user.id, user.username or "", user.first_name or "", requested)
 
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("✅ סיימתי – מחק את ההזמנה", callback_data="done")]
+            [InlineKeyboardButton("✅ סיימתי", callback_data="done")]
         ])
 
         await update.message.reply_text(
-            f"🎉 נרשמת!\n"
+            f"🎉 נרשמת! העוגיות מוכנות לאיסוף מרחוב המייסדים 3, קומה 1, משפחת שמש 🌞\n"
             f"ניתן לעדכן את הכמות בשליחת מספר חדש.\n"
             f"לאחר איסוף העוגיות, נא ללחוץ על הכפתור למטה:",
             reply_markup=keyboard
@@ -116,7 +116,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         returned = delete_order(user.id)
         
         await query.edit_message_text(
-            f"✅ תודה על האיסוף, מקווה שתהנו!"
+            f"✅ תודה על האיסוף, מקווה שתהנו ושהנחמה תהיה מתוקה"
         )
 
 async def new_batch(update: Update, context: ContextTypes.DEFAULT_TYPE):
