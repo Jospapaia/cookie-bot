@@ -11,9 +11,6 @@ ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-async def whoami(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(f"ה־user ID שלך הוא: {update.effective_user.id}")
-
 def get_remaining_cookies():
     if not os.path.exists(COOKIE_COUNTER_FILE):
         with open(COOKIE_COUNTER_FILE, "w") as f:
@@ -185,7 +182,6 @@ if __name__ == "__main__":
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.add_handler(CommandHandler("export", export_orders))
-    app.add_handler(CommandHandler("whoami", whoami))
-
+    
     print("🤖 הבוט פועל...")
     app.run_polling()
