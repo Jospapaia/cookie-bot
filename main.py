@@ -7,12 +7,9 @@ TOTAL_COOKIES = 60
 COOKIE_COUNTER_FILE = "cookie_count.txt"
 ORDERS_FILE = "orders.txt"
 ANNOUNCE_CHAT_ID = os.getenv("ANNOUNCE_CHAT_ID")
+ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-
-async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_id = update.effective_chat.id
-    await update.message.reply_text(f"Chat ID: `{chat_id}`", parse_mode="Markdown")
 
 def get_remaining_cookies():
     if not os.path.exists(COOKIE_COUNTER_FILE):
@@ -123,6 +120,10 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 async def new_batch(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_ID:
+        await update.message.reply_text("⛔ הפקודה הזו זמינה רק למפעיל הבוט.")
+        return
+
     if len(context.args) != 1 or not context.args[0].isdigit():
         await update.message.reply_text("שלח פקודה בפורמט: /newbatch 60")
         return
@@ -153,15 +154,34 @@ async def new_batch(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         logging.error(f"שגיאה בשליחת הודעה לקבוצה: {e}")
 
+async def export_orders(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_ID:
+        await update.message.reply_text("⛔ הפקודה הזו זמינה רק למפעיל הבוט.")
+        return
+
+    if not os.path.exists(ORDERS_FILE):
+        await update.message.reply_text("אין הזמנות כרגע.")
+        return
+
+    lines = []
+    with open(ORDERS_FILE, "r") as f:
+        for line in f:
+            user_id, username, first_name, count = line.strip().split(",")
+            display = f"[{first_name}](tg://user?id={user_id})" if not username else f"[@{username}](https://t.me/{username})"
+            lines.append(f"{display} – {count} עוגיות")
+
+    report = "\n".join(lines) or "אין הזמנות כרגע."
+    await update.message.reply_text(report, parse_mode="Markdown")
+    
 if __name__ == "__main__":
     token = os.getenv("BOT_TOKEN")
     app = ApplicationBuilder().token(token).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("newbatch", new_batch))
-    app.add_handler(CommandHandler("getchatid", get_chat_id))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app.add_handler(CommandHandler("export", export_orders))
 
     print("🤖 הבוט פועל...")
     app.run_polling()
