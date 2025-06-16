@@ -99,13 +99,24 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("✅ סיימתי", callback_data="done")]
         ])
-
+        
+        new_remaining = remaining - delta
+        
         await update.message.reply_text(
             f"🎉 נרשמת! העוגיות מוכנות לאיסוף מרחוב המייסדים 3, קומה 1, משפחת שמש 🌞\n"
             f"ניתן לעדכן את הכמות בשליחת מספר חדש.\n"
             f"לאחר איסוף העוגיות, נא ללחוץ על הכפתור למטה:",
             reply_markup=keyboard
         )
+
+        if new_remaining == 0 and ANNOUNCE_CHAT_ID:
+            try:
+                await context.bot.send_message(
+                    chat_id=int(ANNOUNCE_CHAT_ID),
+                    text="❌ העוגיות נגמרו!\nאני מקווה לעדכן בקרוב על עוגיות טריות 🧈🍪"
+                )
+            except Exception as e:
+                logging.error(f"שגיאה בשליחת הודעת סיום: {e}")
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -141,7 +152,7 @@ async def new_batch(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     msg = (
         "🍪 *יש עוגיות טריות!*\n"
-        "עכשיו זמינות להזמנה – הבוט מחכה לכם 🍪\n\n"
+        f"עכשיו זמינות להזמנה – הבוט מחכה לכם {new_total} 🍪\n\n"
         "🮡 האיסוף מרחוב המייסדים 3 – נא להגיע עם קופסה.\n\n"
         "📲 להזמנה – דרך הבוט:\n"
         "https://t.me/YossisCookiesForTheSoulBot?start=start\n\n"
