@@ -90,8 +90,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     requested = int(text)
     user = update.effective_user
+    
     existing_order = get_existing_order_count(user.id)
-    delta = requested - existing_order
+
+    # אם זה אתה – ההזמנה תצטבר
+    if user.id == ADMIN_ID:
+        delta = requested
+        new_total = existing_order + requested
+    else:
+        delta = requested - existing_order
+        new_total = requested
 
     remaining = get_remaining_cookies()
 
@@ -99,7 +107,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"יש רק {remaining} עוגיות זמינות כרגע.")
     else:
         update_remaining_cookies(remaining - delta)
-        record_order(user.id, user.username or "", user.first_name or "", requested)
+        record_order(user.id, user.username or "", user.first_name or "", new_total)
 
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("✅ סיימתי", callback_data="done")]
