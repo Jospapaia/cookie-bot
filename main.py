@@ -71,7 +71,7 @@ def delete_order(user_id):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     remaining = get_remaining_cookies()
-    if (remaining > 0)
+    if remaining > 0
         await update.message.reply_text(
             f"🍪 יש {remaining} עוגיות זמינות להזמנה.\n"
             f"תשלחו לי מספר (למשל 2) וארשום אתכם.\n"
