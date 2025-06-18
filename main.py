@@ -71,11 +71,16 @@ def delete_order(user_id):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     remaining = get_remaining_cookies()
-    await update.message.reply_text(
-        f"🍪 יש {remaining} עוגיות זמינות להזמנה.\n"
-        f"תשלחו לי מספר (למשל 2) וארשום אתכם.\n"
-        f"🮡 האיסוף מרחוב המייסדים 3 – נא להגיע עם קופסה."
-    )
+    if (remaining > 0)
+        await update.message.reply_text(
+            f"🍪 יש {remaining} עוגיות זמינות להזמנה.\n"
+            f"תשלחו לי מספר (למשל 2) וארשום אתכם.\n"
+            f"האיסוף מרחוב המייסדים 3 – נא להגיע עם קופסה."
+        )
+    else
+        await update.message.reply_text(
+            f"אין עוגיות זמינות. חכו לעידכונים."
+        )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
@@ -152,8 +157,8 @@ async def new_batch(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     msg = (
         "🍪 *יש עוגיות טריות!*\n"
-        f"עכשיו זמינות להזמנה – הבוט מחכה לכם {new_total} 🍪\n\n"
-        "🮡 האיסוף מרחוב המייסדים 3 – נא להגיע עם קופסה.\n\n"
+        f"🍪 {new_total} עוגיות מוכנות להזמנה – הבוט מחכה לכם.\n\n"
+        "האיסוף מרחוב המייסדים 3 – נא להגיע עם קופסה.\n\n"
         "📲 להזמנה – דרך הבוט:\n"
         "https://t.me/YossisCookiesForTheSoulBot?start=start\n\n"
         "🙏 אנא הזמינו כמות שמתאימה למשפחה שלכם – כדי שיישאר לכולם."
