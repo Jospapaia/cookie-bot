@@ -3,7 +3,7 @@ import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
-TOTAL_COOKIES = 60
+TOTAL_COOKIES = 0
 COOKIE_COUNTER_FILE = "cookie_count.txt"
 ORDERS_FILE = "orders.txt"
 ANNOUNCE_CHAT_ID = os.getenv("ANNOUNCE_CHAT_ID")
